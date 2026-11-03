@@ -93,6 +93,7 @@ internal fun EpisodeOptionsOverlay(
     imdbRating: Double? = null,
     isWatched: Boolean,
     blurUnwatchedEpisodes: Boolean = false,
+    hideUnwatchedEpisodesDescription: Boolean = false,
     style: EpisodeOptionsOverlayStyle = EpisodeOptionsOverlayStyle.ARTWORK,
     isPending: Boolean,
     isSeasonFullyWatched: Boolean = false,
@@ -448,7 +449,8 @@ internal fun EpisodeOptionsOverlay(
                         overflow = TextOverflow.Ellipsis
                     )
 
-                    if (description.isNotBlank()) {
+
+                    if (description.isNotBlank() && isWatched) {
                         Text(
                             text = description,
                             style = (if (isNoneStyle) {
@@ -461,6 +463,12 @@ internal fun EpisodeOptionsOverlay(
                             overflow = TextOverflow.Ellipsis
                         )
                     }
+                    else{
+                        Text(
+                            text = "Description hidden to prevent spoilers."
+                        )
+                    }
+
                 }
 
                 Column(

@@ -384,6 +384,7 @@ fun EpisodesRow(
     watchedEpisodes: Set<Pair<Int, Int>> = emptySet(),
     episodeWatchedPendingKeys: Set<String> = emptySet(),
     blurUnwatchedEpisodes: Boolean = false,
+    hideUnwatchedEpisodesDescription: Boolean = true,
     episodeOptionsOverlayStyle: EpisodeOptionsOverlayStyle = EpisodeOptionsOverlayStyle.ARTWORK,
     posterCardCornerRadiusDp: Int = 12,
     onEpisodeClick: (Video) -> Unit,
@@ -548,6 +549,7 @@ fun EpisodesRow(
                 imdbRating = imdbRating,
                 isMarkedWatched = isMarkedWatched,
                 blurUnwatched = blurUnwatchedEpisodes,
+                hideUnwatchedDescription = hideUnwatchedEpisodesDescription,
                 suppressMarquee = isOverlayOpen,
                 cardMetrics = cardMetrics,
                 onClick = episodeOnClick,
@@ -644,6 +646,7 @@ private fun EpisodeCard(
     imdbRating: Double? = null,
     isMarkedWatched: Boolean = false,
     blurUnwatched: Boolean = false,
+    hideUnwatchedDescription: Boolean = true,
     suppressMarquee: Boolean = false,
     cardMetrics: EpisodeCardMetrics,
     onClick: () -> Unit,
@@ -667,8 +670,14 @@ private fun EpisodeCard(
     val ratingLabel = remember(imdbRating) {
         imdbRating?.takeIf { it > 0.0 }?.let { String.format(Locale.US, "%.1f", it) }
     }
-    val description = remember(episode.overview) { episode.overview?.trim().orEmpty() }
     val isWatched = remember(watchProgress, isMarkedWatched) { watchProgress?.isCompleted() == true || isMarkedWatched }
+    val description = remember(episode.overview, hideUnwatchedDescription, isWatched) {
+        if (hideUnwatchedDescription && !isWatched) {
+            "Description hidden to prevent spoilers."
+        } else {
+            episode.overview?.trim().orEmpty()
+        }
+    }
     val shouldBlur = remember(blurUnwatched, isWatched) { blurUnwatched && !isWatched }
     val progressPercent = remember(watchProgress) { watchProgress?.progressPercentage ?: 0f }
     val showProgress = remember(watchProgress) { watchProgress?.isInProgress() == true }
@@ -976,12 +985,17 @@ private fun EpisodeCard(
                     color = textPrimary,
                 )
 
-                if (description.isNotBlank()) {
+                if (description.isNotBlank() && isWatched) {
                     Text(
                         text = description,
                         style = descriptionStyle.copy(textDirection = description.contentTextDirection()),
                         maxLines = cardMetrics.descriptionMaxLines,
                         overflow = TextOverflow.Ellipsis
+                    )
+                }
+                else{
+                    Text(
+                        text = "Description hidden to prevent spoilers."
                     )
                 }
 

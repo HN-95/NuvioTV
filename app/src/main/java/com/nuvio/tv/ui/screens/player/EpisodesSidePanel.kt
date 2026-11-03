@@ -627,6 +627,7 @@ private fun EpisodesListView(
                             isCurrent = isCurrent,
                             isWatched = isEpisodeWatched(episode),
                             blurUnwatched = uiState.blurUnwatchedEpisodes,
+                            hideUnwatchedEpisodesDescription = uiState.hideUnwatchedEpisodesDescription,
                             focusRequester = episodesFocusRequester,
                             requestInitialFocus = requestInitialFocus,
                             availableSeasons = sortedSeasons,
@@ -776,6 +777,7 @@ private fun EpisodeItem(
     isCurrent: Boolean,
     isWatched: Boolean = false,
     blurUnwatched: Boolean = false,
+    hideUnwatchedEpisodesDescription: Boolean = false,
     focusRequester: FocusRequester,
     requestInitialFocus: Boolean,
     availableSeasons: List<Int> = emptyList(),
@@ -968,7 +970,12 @@ private fun EpisodeItem(
                     )
                 }
 
-                episode.overview?.takeIf { it.isNotBlank() }?.let {
+
+
+                val descriptionText = if (hideUnwatchedEpisodesDescription && !isWatched) {
+                    "Description hidden to prevent spoilers."
+                } else {
+                      descriptionText?.takeIf { it.isNotBlank() }?.let {
                     FocusScrollingText(
                         text = it,
                         focused = isFocused,
@@ -980,6 +987,9 @@ private fun EpisodeItem(
                         startDelayMillis = EpisodeDescriptionScrollDelayMillis
                     )
                 }
+                }
+
+              
             }
         }
     }

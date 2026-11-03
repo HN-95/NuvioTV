@@ -2099,7 +2099,7 @@ private suspend fun HomeViewModel.enrichNextUpItem(
             ?: video?.title?.takeIf { it.isNotBlank() }
             ?: item.info.episodeTitle
         else video?.title?.takeIf { it.isNotBlank() } ?: item.info.episodeTitle,
-        episodeDescription = if (settings.useEpisodes) tmdbData?.overview
+        episodeDescription = if (settings.useEpisodes) "Description Hidden to Avoid Spoilers."
             ?: video?.overview?.takeIf { it.isNotBlank() }
             ?: item.info.episodeDescription
         else video?.overview?.takeIf { it.isNotBlank() } ?: item.info.episodeDescription,
@@ -2649,7 +2649,7 @@ private fun HomeViewModel.persistLocalContinueWatchingMetadata(
                 season = info.season,
                 episode = info.episode,
                 episodeTitle = info.episodeTitle,
-                episodeDescription = info.episodeDescription,
+                episodeDescription = "Description Hidden to Avoid Spoilers.",
                 thumbnail = info.thumbnail?.takeIf { it !in brokenUrls },
                 released = info.released,
                 hasAired = info.hasAired,

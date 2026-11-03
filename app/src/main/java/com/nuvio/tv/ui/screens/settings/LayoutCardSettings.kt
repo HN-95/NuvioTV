@@ -131,6 +131,12 @@ internal fun LayoutContinueWatchingSection(
             )
         }
         SettingsToggleRow(
+            title = stringResource(R.string.layout_hide_unwatched_episode_description),
+            subtitle = stringResource(R.string.layout_hide_unwatched_episode_description_sub),
+            checked = uiState.hideUnwatchedEpisodesDescription,
+            onToggle = { onEvent(LayoutSettingsEvent.SetHideUnwatchedEpisodesDescription(!uiState.hideUnwatchedEpisodesDescription)) }
+        )
+        SettingsToggleRow(
             title = stringResource(R.string.layout_next_up_furthest_episode),
             subtitle = stringResource(R.string.layout_next_up_furthest_episode_sub),
             checked = uiState.nextUpFromFurthestEpisode,

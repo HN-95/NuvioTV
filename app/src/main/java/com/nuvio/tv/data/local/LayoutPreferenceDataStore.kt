@@ -104,6 +104,7 @@ class LayoutPreferenceDataStore @Inject constructor(
     private val cardDepthCastEnabledKey = booleanPreferencesKey("card_depth_cast_enabled")
     private val cardDepthTrailersEnabledKey = booleanPreferencesKey("card_depth_trailers_enabled")
     private val blurUnwatchedEpisodesKey = booleanPreferencesKey("blur_unwatched_episodes")
+    private val hideUnwatchedEpisodesDescriptionKey = booleanPreferencesKey("hide-unwatched-episodes-description")
     private val randomEpisodeEnabledKey = booleanPreferencesKey("random_episode_enabled")
     private val startupSplashEnabledKey = booleanPreferencesKey("startup_splash_enabled")
     private val alwaysShowLandscapeClearlogoKey = booleanPreferencesKey("always_show_landscape_clearlogo")
@@ -338,6 +339,10 @@ class LayoutPreferenceDataStore @Inject constructor(
 
     val blurUnwatchedEpisodes: Flow<Boolean> = profileFlow { prefs ->
         prefs[blurUnwatchedEpisodesKey] ?: false
+    }
+
+    val hideUnwatchedEpisodesDescription: Flow<Boolean> = profileFlow { prefs ->
+        prefs[hideUnwatchedEpisodesDescriptionKey] ?: false
     }
 
     val randomEpisodeEnabled: Flow<Boolean> = profileFlow { prefs ->
@@ -740,6 +745,11 @@ class LayoutPreferenceDataStore @Inject constructor(
         }
     }
 
+    suspend fun setHideUnwatchedEpisodesDescription(enabled: Boolean) {
+        store().edit { prefs ->
+            prefs[hideUnwatchedEpisodesDescriptionKey] = enabled
+        }
+    }
     suspend fun setRandomEpisodeEnabled(enabled: Boolean) {
         store().edit { prefs ->
             prefs[randomEpisodeEnabledKey] = enabled
