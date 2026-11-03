@@ -949,7 +949,7 @@ private fun EpisodeItem(
                 }
             }
 
-            // Episode info
+                        // Episode info
             Column(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(NuvioTheme.spacing.xs)
@@ -970,12 +970,13 @@ private fun EpisodeItem(
                     )
                 }
 
-
-
                 val descriptionText = if (hideUnwatchedEpisodesDescription && !isWatched) {
                     "Description hidden to prevent spoilers."
                 } else {
-                      descriptionText?.takeIf { it.isNotBlank() }?.let {
+                    episode.overview
+                }
+
+                descriptionText?.takeIf { it.isNotBlank() }?.let {
                     FocusScrollingText(
                         text = it,
                         focused = isFocused,
@@ -987,9 +988,6 @@ private fun EpisodeItem(
                         startDelayMillis = EpisodeDescriptionScrollDelayMillis
                     )
                 }
-                }
-
-              
             }
         }
     }
