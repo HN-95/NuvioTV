@@ -212,18 +212,18 @@ android {
         }
     }
 
-    signingConfigs {
-        create("release") {
-            keyAlias = releaseKeyAliasValue
-            keyPassword = releaseKeyPasswordValue
-            storeFile = releaseStoreFilePath?.let(::file) ?: file("../nuviotv.jks")
-            storePassword = releaseStorePasswordValue
-        }
-    }
+ //   signingConfigs {
+ //       create("release") {
+     //       keyAlias = releaseKeyAliasValue
+     //       keyPassword = releaseKeyPasswordValue
+    //        storeFile = releaseStoreFilePath?.let(::file) ?: file("../nuviotv.jks")
+    //        storePassword = releaseStorePasswordValue
+   //     }
+ //   }
 
     buildTypes {
         debug {
-            signingConfig = signingConfigs.getByName("release")
+           // signingConfig = signingConfigs.getByName("release")
             isDebuggable = parseBooleanProperty(providers.gradleProperty("debuggable").orNull)
             isMinifyEnabled = false
 
@@ -256,11 +256,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            signingConfig = if (useDebugReleaseSigning) {
-                signingConfigs.getByName("debug")
-            } else {
-                signingConfigs.getByName("release")
-            }
+            signingConfig = signingConfigs.getByName("debug")
 
             buildConfigField("boolean", "IS_DEBUG_BUILD", "false")
             buildConfigField("String", "SENTRY_ENVIRONMENT", buildConfigString("production"))
