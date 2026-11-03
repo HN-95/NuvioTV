@@ -1,0 +1,43 @@
+name: Build fullDebug APK (armeabi-v7a)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
+      - name: Build fullDebug APK (v7a only)
+        run: ./gradlew :app:assembleFullDebug -Pandroid.injected.build.abi=armeabi-v7a --stacktrace
+
+      - name: Check ABIs in APK
+        run: |
+          APK=$(ls app/build/outputs/apk/full/debug/*.apk | head -n 1)
+          echo "APK: $APK"
+          unzip -l "$APK" | grep "lib/" | awk '{print $4}' | cut -d/ -f1-2 | sort | uniq -c
+          if unzip -l "$APK" | grep -qE "lib/(arm64-v8a|x86|x86_64)/"; then
+            echo "::warning::Other ABIs found in the APK, the ABI flag did not filter them."
+          fi
+
+      - name: Upload fullDebug APK (v7a)
+        uses: actions/upload-artifact@v4
+        with:
+          name: NuvioTV-fullDebug-armeabi-v7a
+          path: app/build/outputs/apk/full/debug/*.apk
+          if-no-files-found: error
