@@ -59,4 +59,32 @@ class EpisodeOptionsOverlayTest {
             )
         )
     }
+
+    @Test
+    fun `episode description is hidden only when setting is enabled and episode is unwatched`() {
+        assertFalse(
+            shouldHideEpisodeDescription(
+                hideUnwatchedEpisodesDescription = false,
+                isWatched = false
+            )
+        )
+        assertFalse(
+            shouldHideEpisodeDescription(
+                hideUnwatchedEpisodesDescription = false,
+                isWatched = true
+            )
+        )
+        assertTrue(
+            shouldHideEpisodeDescription(
+                hideUnwatchedEpisodesDescription = true,
+                isWatched = false
+            )
+        )
+        assertFalse(
+            shouldHideEpisodeDescription(
+                hideUnwatchedEpisodesDescription = true,
+                isWatched = true
+            )
+        )
+    }
 }

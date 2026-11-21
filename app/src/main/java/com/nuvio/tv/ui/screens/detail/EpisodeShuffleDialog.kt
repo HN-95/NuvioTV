@@ -39,6 +39,7 @@ internal fun EpisodeShuffleDialog(
     onDismiss: () -> Unit,
     onPlay: (Video) -> Unit,
     blurUnwatchedEpisodes: Boolean = false,
+    hideUnwatchedEpisodesDescription: Boolean = false,
     showManualPlayOption: Boolean = false,
     onPlayManually: (Video) -> Unit = onPlay,
     onStartFromBeginning: (Video) -> Unit = onPlay
@@ -82,6 +83,7 @@ internal fun EpisodeShuffleDialog(
             isResume = episodeProgress[previewEpisode.season to previewEpisode.episode]?.isInProgress() == true,
             showManualPlayOption = showManualPlayOption,
             blurUnwatchedEpisodes = blurUnwatchedEpisodes,
+            hideUnwatchedEpisodesDescription = hideUnwatchedEpisodesDescription,
             canShuffleAgain = (readyPicker?.count(includeWatched) ?: 0) > 1,
             starting = starting,
             onBack = { if (!starting) selectedEpisode = null },

@@ -631,6 +631,7 @@ private fun EpisodesListView(
                             isCurrent = isCurrent,
                             isWatched = isEpisodeWatched(episode),
                             blurUnwatched = uiState.blurUnwatchedEpisodes,
+                            hideUnwatchedDescription = uiState.hideUnwatchedEpisodesDescription,
                             focusRequester = episodesFocusRequester,
                             requestInitialFocus = requestInitialFocus,
                             availableSeasons = sortedSeasons,
@@ -653,6 +654,7 @@ private fun EpisodesListView(
             episode = episode,
             isWatched = isEpisodeWatched(episode),
             blurUnwatchedEpisodes = uiState.blurUnwatchedEpisodes,
+            hideUnwatchedEpisodesDescription = uiState.hideUnwatchedEpisodesDescription,
             style = uiState.episodeOptionsOverlayStyle,
             isPending = false,
             showWatchedActions = false,
@@ -780,6 +782,7 @@ private fun EpisodeItem(
     isCurrent: Boolean,
     isWatched: Boolean = false,
     blurUnwatched: Boolean = false,
+    hideUnwatchedDescription: Boolean = false,
     focusRequester: FocusRequester,
     requestInitialFocus: Boolean,
     availableSeasons: List<Int> = emptyList(),
@@ -790,6 +793,7 @@ private fun EpisodeItem(
     onLongClick: () -> Unit = {}
 ) {
     val shouldBlur = blurUnwatched && !isWatched
+    val shouldHideDescription = hideUnwatchedDescription && !isWatched
     var isFocused by remember { mutableStateOf(false) }
     val isRtl = androidx.compose.ui.platform.LocalLayoutDirection.current == androidx.compose.ui.unit.LayoutDirection.Rtl
     val context = LocalContext.current
@@ -972,12 +976,17 @@ private fun EpisodeItem(
                     )
                 }
 
-                episode.overview?.takeIf { it.isNotBlank() }?.let {
+                episode.overview?.takeIf { it.isNotBlank() }?.let { overview ->
+                    val textToShow = if (shouldHideDescription) {
+                        stringResource(R.string.episode_description_hidden_spoiler)
+                    } else {
+                        overview
+                    }
                     FocusScrollingText(
-                        text = it,
+                        text = textToShow,
                         focused = isFocused,
                         style = MaterialTheme.typography.bodySmall.copy(
-                            textDirection = it.contentTextDirection()
+                            textDirection = textToShow.contentTextDirection()
                         ),
                         maxLines = 2,
                         color = NuvioTheme.extendedColors.textSecondary,

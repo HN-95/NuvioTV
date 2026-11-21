@@ -1382,6 +1382,15 @@ fun PlayerScreen(
             )
         }
 
+        val isCurrentEpisodeWatched = uiState.currentSeason != null &&
+            uiState.currentEpisode != null &&
+            ((uiState.episodeWatchProgressMap[uiState.currentSeason to uiState.currentEpisode]?.isCompleted() == true) ||
+                ((uiState.currentSeason to uiState.currentEpisode) in uiState.watchedEpisodeKeys))
+        val shouldHidePauseEpisodeDescription = uiState.hideUnwatchedEpisodesDescription &&
+            uiState.currentSeason != null &&
+            uiState.currentEpisode != null &&
+            !isCurrentEpisodeWatched
+
         PauseOverlay(
             visible = uiState.showPauseOverlay && uiState.error == null &&
                 !uiState.showLoadingOverlay && !postPlayRecommendationState.isVisible,
@@ -1393,7 +1402,11 @@ fun PlayerScreen(
             episode = uiState.currentEpisode,
             year = uiState.releaseYear,
             type = uiState.contentType,
-            description = uiState.description,
+            description = if (shouldHidePauseEpisodeDescription && !uiState.description.isNullOrBlank()) {
+                stringResource(R.string.episode_description_hidden_spoiler)
+            } else {
+                uiState.description
+            },
             cast = uiState.castMembers,
             showClock = !uiState.isLive,
             modifier = Modifier

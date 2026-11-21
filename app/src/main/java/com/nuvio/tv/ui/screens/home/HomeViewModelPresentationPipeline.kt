@@ -333,6 +333,7 @@ internal fun HomeViewModel.observeModernHomePresentationPipeline() {
                     showFullReleaseDate = state.showFullReleaseDate,
                     showImdbRatings = state.homeImdbRatingsVisibility.showRatings,
                     detailImdbRatingsVisibility = state.detailImdbRatingsVisibility,
+                    hideUnwatchedEpisodesDescription = state.hideUnwatchedEpisodesDescription,
                     localeTag = localeTag
                 )
             }
@@ -348,6 +349,8 @@ internal fun HomeViewModel.observeModernHomePresentationPipeline() {
                     && old.showCatalogTypeSuffix == new.showCatalogTypeSuffix
                     && old.showFullReleaseDate == new.showFullReleaseDate
                     && old.showImdbRatings == new.showImdbRatings
+                    && old.detailImdbRatingsVisibility == new.detailImdbRatingsVisibility
+                    && old.hideUnwatchedEpisodesDescription == new.hideUnwatchedEpisodesDescription
                     && old.localeTag == new.localeTag
                     && old.catalogRows.size == new.catalogRows.size
             }

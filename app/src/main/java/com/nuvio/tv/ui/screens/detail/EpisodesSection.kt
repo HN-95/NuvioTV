@@ -494,6 +494,7 @@ fun EpisodesRow(
     watchedEpisodes: Set<Pair<Int, Int>> = emptySet(),
     episodeWatchedPendingKeys: Set<String> = emptySet(),
     blurUnwatchedEpisodes: Boolean = false,
+    hideUnwatchedEpisodesDescription: Boolean = false,
     episodeOptionsOverlayStyle: EpisodeOptionsOverlayStyle = EpisodeOptionsOverlayStyle.ARTWORK,
     posterCardCornerRadiusDp: Int = 12,
     onEpisodeClick: (Video) -> Unit,
@@ -659,6 +660,7 @@ fun EpisodesRow(
                 imdbRating = imdbRating,
                 isMarkedWatched = isMarkedWatched,
                 blurUnwatched = blurUnwatchedEpisodes,
+                hideUnwatchedDescription = hideUnwatchedEpisodesDescription,
                 suppressMarquee = isOverlayOpen,
                 cardMetrics = cardMetrics,
                 onClick = episodeOnClick,
@@ -693,6 +695,7 @@ fun EpisodesRow(
             },
             isWatched = selectedWatched,
             blurUnwatchedEpisodes = blurUnwatchedEpisodes,
+            hideUnwatchedEpisodesDescription = hideUnwatchedEpisodesDescription,
             style = episodeOptionsOverlayStyle,
             isPending = isPending,
             isSeasonFullyWatched = isSeasonFullyWatched,
@@ -756,6 +759,7 @@ private fun EpisodeCard(
     imdbRating: Double? = null,
     isMarkedWatched: Boolean = false,
     blurUnwatched: Boolean = false,
+    hideUnwatchedDescription: Boolean = false,
     suppressMarquee: Boolean = false,
     cardMetrics: EpisodeCardMetrics,
     onClick: () -> Unit,
@@ -779,9 +783,19 @@ private fun EpisodeCard(
     val ratingLabel = remember(imdbRating) {
         imdbRating?.takeIf { it > 0.0 }?.let { String.format(Locale.US, "%.1f", it) }
     }
-    val description = remember(episode.overview) { episode.overview?.trim().orEmpty() }
     val isWatched = remember(watchProgress, isMarkedWatched) { watchProgress?.isCompleted() == true || isMarkedWatched }
     val shouldBlur = remember(blurUnwatched, isWatched) { blurUnwatched && !isWatched }
+    val shouldHideDescription = remember(hideUnwatchedDescription, isWatched) {
+        shouldHideEpisodeDescription(
+            hideUnwatchedEpisodesDescription = hideUnwatchedDescription,
+            isWatched = isWatched
+        )
+    }
+    val strHiddenDescription = stringResource(R.string.episode_description_hidden_spoiler)
+    val description = remember(episode.overview, shouldHideDescription, strHiddenDescription) {
+        val rawOverview = episode.overview?.trim().orEmpty()
+        if (shouldHideDescription && rawOverview.isNotBlank()) strHiddenDescription else rawOverview
+    }
     val progressPercent = remember(watchProgress) { watchProgress?.progressPercentage ?: 0f }
     val showProgress = remember(watchProgress) { watchProgress?.isInProgress() == true }
     val showCompletedBadge = isWatched

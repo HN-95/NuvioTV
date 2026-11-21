@@ -931,6 +931,7 @@ fun MetaDetailsScreen(
                     episodeWatchedPendingKeys = uiState.episodeWatchedPendingKeys,
                     blurUnwatchedEpisodes = uiState.blurUnwatchedEpisodes,
                     seasonPostersEnabled = uiState.seasonPostersEnabled,
+                    hideUnwatchedEpisodesDescription = uiState.hideUnwatchedEpisodesDescription,
                     randomEpisodeEnabled = uiState.randomEpisodeEnabled,
                     episodeShuffle = uiState.episodeShuffle,
                     shufflePoolEmpty = uiState.shufflePoolEmpty,
@@ -1275,6 +1276,7 @@ private fun MetaDetailsContent(
     episodeWatchedPendingKeys: Set<String>,
     blurUnwatchedEpisodes: Boolean,
     seasonPostersEnabled: Boolean,
+    hideUnwatchedEpisodesDescription: Boolean = false,
     randomEpisodeEnabled: Boolean,
     episodeShuffle: com.nuvio.tv.domain.model.EpisodeShuffleSettings,
     shufflePoolEmpty: Boolean,
@@ -2666,6 +2668,7 @@ private fun MetaDetailsContent(
                             watchedEpisodes = watchedEpisodes,
                             episodeWatchedPendingKeys = episodeWatchedPendingKeys,
                             blurUnwatchedEpisodes = blurUnwatchedEpisodes,
+                            hideUnwatchedEpisodesDescription = hideUnwatchedEpisodesDescription,
                             episodeOptionsOverlayStyle = episodeOptionsOverlayStyle,
                             posterCardCornerRadiusDp = posterCardCornerRadiusDp,
                             onEpisodeClick = episodeClick,
@@ -3192,6 +3195,7 @@ private fun MetaDetailsContent(
                 watchedEpisodes = watchedEpisodes,
                 episodeProgress = episodeProgressMap,
                 blurUnwatchedEpisodes = blurUnwatchedEpisodes,
+                hideUnwatchedEpisodesDescription = hideUnwatchedEpisodesDescription,
                 showManualPlayOption = showManualPlayOption,
                 onDismiss = {
                     showRandomEpisodeOverlay = false

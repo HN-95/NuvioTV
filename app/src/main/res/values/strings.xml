@@ -1124,6 +1124,9 @@
     <string name="layout_season_posters_sub">Show seasons as posters instead of text tabs when available.</string>
     <string name="layout_blur_unwatched">Blur Unwatched Episodes</string>
     <string name="layout_blur_unwatched_sub">Blur episode thumbnails until watched to avoid spoilers.</string>
+    <string name="layout_hide_unwatched_description">Hide Unwatched Episode Description</string>
+    <string name="layout_hide_unwatched_description_sub">Hide episode descriptions until watched to avoid spoilers.</string>
+    <string name="episode_description_hidden_spoiler">Description was hidden to prevent spoilers</string>
     <string name="layout_episode_options_overlay">Episode Options Overlay</string>
     <string name="layout_episode_options_overlay_sub">Choose the appearance shown when holding an episode.</string>
     <string name="layout_episode_options_overlay_none">None</string>

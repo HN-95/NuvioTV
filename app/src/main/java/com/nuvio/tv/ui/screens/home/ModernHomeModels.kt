@@ -193,11 +193,13 @@ class ModernCarouselRowBuildCache {
     var continueWatchingUpcomingLabel: String = ""
     var continueWatchingUseLandscapePosters: Boolean = false
     var continueWatchingShowImdbRatings: Boolean = true
+    var continueWatchingHideUnwatchedEpisodesDescription: Boolean = false
     var continueWatchingRow: HeroCarouselRow? = null
     var upcomingItems: List<ContinueWatchingItem> = emptyList()
     var upcomingTitle: String = ""
     var upcomingUseLandscapePosters: Boolean = false
     var upcomingShowImdbRatings: Boolean = true
+    var upcomingHideUnwatchedEpisodesDescription: Boolean = false
     var upcomingRow: HeroCarouselRow? = null
     internal val catalogRows = java.util.concurrent.ConcurrentHashMap<String, ModernCatalogRowBuildCacheEntry>()
     internal val collectionRows = java.util.concurrent.ConcurrentHashMap<String, ModernCollectionRowBuildCacheEntry>()
@@ -313,6 +315,7 @@ internal fun buildContinueWatchingItem(
     showImdbRatings: Boolean,
     detailImdbRatingsVisibility: com.nuvio.tv.domain.model.DetailImdbRatingsVisibility =
         com.nuvio.tv.domain.model.DetailImdbRatingsVisibility.SHOW_ALL,
+    hideUnwatchedEpisodesDescription: Boolean = false,
     airsDateTemplate: String,
     upcomingLabel: String,
     context: android.content.Context
@@ -361,10 +364,17 @@ internal fun buildContinueWatchingItem(
                 isSeries && episodeTitle != null -> episodeTitle
                 else -> localizedContentType(context, item.progress.contentType)
             }
+            val shouldHideEpisodeDescription = isSeries &&
+                hideUnwatchedEpisodesDescription &&
+                !item.progress.isCompleted()
             HeroPreview(
                 title = item.progress.name,
                 logo = item.progress.logo,
-                description = item.episodeDescription ?: item.progress.episodeTitle?.localizeEpisodeTitle(context),
+                description = if (shouldHideEpisodeDescription) {
+                    context.getString(R.string.episode_description_hidden_spoiler)
+                } else {
+                    item.episodeDescription ?: item.progress.episodeTitle?.localizeEpisodeTitle(context)
+                },
                 contentTypeText = episodeLabel,
                 isSeries = isSeries,
                 yearText = extractYearOrRange(item.releaseInfo),
@@ -394,9 +404,13 @@ internal fun buildContinueWatchingItem(
             HeroPreview(
                 title = item.info.name,
                 logo = item.info.logo,
-                description = item.info.episodeDescription
-                    ?: item.info.episodeTitle?.localizeEpisodeTitle(context)
-                    ?: item.info.airDateLabel?.let { airsDateTemplate.format(it) },
+                description = if (hideUnwatchedEpisodesDescription) {
+                    context.getString(R.string.episode_description_hidden_spoiler)
+                } else {
+                    item.info.episodeDescription
+                        ?: item.info.episodeTitle?.localizeEpisodeTitle(context)
+                        ?: item.info.airDateLabel?.let { airsDateTemplate.format(it) }
+                },
                 contentTypeText = episodeLabel,
                 isSeries = true,
                 yearText = extractYearOrRange(item.info.releaseInfo),

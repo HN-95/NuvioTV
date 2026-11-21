@@ -65,6 +65,7 @@ internal fun EpisodeShufflePreview(
     isResume: Boolean,
     showManualPlayOption: Boolean,
     blurUnwatchedEpisodes: Boolean,
+    hideUnwatchedEpisodesDescription: Boolean = false,
     canShuffleAgain: Boolean,
     starting: Boolean,
     onBack: () -> Unit,
@@ -141,8 +142,13 @@ internal fun EpisodeShufflePreview(
                     Text(episode.title.localizeEpisodeTitle(LocalContext.current),
                         style = if (compact) MaterialTheme.typography.headlineMedium else MaterialTheme.typography.headlineLarge,
                         color = NuvioTheme.colors.TextPrimary, maxLines = 2, overflow = TextOverflow.Ellipsis)
-                    episode.overview?.takeIf { it.isNotBlank() }?.let {
-                        Text(it, style = MaterialTheme.typography.bodyMedium, color = NuvioTheme.colors.TextSecondary,
+                    episode.overview?.takeIf { it.isNotBlank() }?.let { overview ->
+                        val textToShow = if (shouldHideEpisodeDescription(hideUnwatchedEpisodesDescription, isWatched)) {
+                            stringResource(R.string.episode_description_hidden_spoiler)
+                        } else {
+                            overview
+                        }
+                        Text(textToShow, style = MaterialTheme.typography.bodyMedium, color = NuvioTheme.colors.TextSecondary,
                             maxLines = if (compact) 3 else 4, overflow = TextOverflow.Ellipsis)
                     }
                     Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {

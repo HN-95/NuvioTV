@@ -25,6 +25,7 @@ internal data class ModernHomePresentationInput(
     val showImdbRatings: Boolean,
     val detailImdbRatingsVisibility: com.nuvio.tv.domain.model.DetailImdbRatingsVisibility =
         com.nuvio.tv.domain.model.DetailImdbRatingsVisibility.SHOW_ALL,
+    val hideUnwatchedEpisodesDescription: Boolean = false,
     val localeTag: String
 )
 
@@ -56,7 +57,8 @@ internal fun buildModernHomePresentation(
                     cache.continueWatchingAirsDateTemplate == strAirsDate &&
                     cache.continueWatchingUpcomingLabel == strUpcoming &&
                     cache.continueWatchingUseLandscapePosters == input.useLandscapePosters &&
-                    cache.continueWatchingShowImdbRatings == input.showImdbRatings
+                    cache.continueWatchingShowImdbRatings == input.showImdbRatings &&
+                    cache.continueWatchingHideUnwatchedEpisodesDescription == input.hideUnwatchedEpisodesDescription
             val continueWatchingRow = if (reuseContinueWatchingRow) {
                 checkNotNull(cache.continueWatchingRow)
             } else {
@@ -70,6 +72,7 @@ internal fun buildModernHomePresentation(
                             useLandscapePosters = input.useLandscapePosters,
                             showImdbRatings = input.showImdbRatings,
                             detailImdbRatingsVisibility = input.detailImdbRatingsVisibility,
+                            hideUnwatchedEpisodesDescription = input.hideUnwatchedEpisodesDescription,
                             airsDateTemplate = strAirsDate,
                             upcomingLabel = strUpcoming,
                             context = localizedContext
@@ -83,6 +86,7 @@ internal fun buildModernHomePresentation(
             cache.continueWatchingUpcomingLabel = strUpcoming
             cache.continueWatchingUseLandscapePosters = input.useLandscapePosters
             cache.continueWatchingShowImdbRatings = input.showImdbRatings
+            cache.continueWatchingHideUnwatchedEpisodesDescription = input.hideUnwatchedEpisodesDescription
             cache.continueWatchingRow = continueWatchingRow
             add(continueWatchingRow)
         } else {
@@ -98,7 +102,8 @@ internal fun buildModernHomePresentation(
                     cache.upcomingItems == input.upcomingItems &&
                     cache.upcomingTitle == strUpcomingSectionTitle &&
                     cache.upcomingUseLandscapePosters == input.useLandscapePosters &&
-                    cache.upcomingShowImdbRatings == input.showImdbRatings
+                    cache.upcomingShowImdbRatings == input.showImdbRatings &&
+                    cache.upcomingHideUnwatchedEpisodesDescription == input.hideUnwatchedEpisodesDescription
             val upcomingRow = if (reuseUpcomingRow) {
                 checkNotNull(cache.upcomingRow)
             } else {
@@ -112,6 +117,7 @@ internal fun buildModernHomePresentation(
                             useLandscapePosters = input.useLandscapePosters,
                             showImdbRatings = input.showImdbRatings,
                             detailImdbRatingsVisibility = input.detailImdbRatingsVisibility,
+                            hideUnwatchedEpisodesDescription = input.hideUnwatchedEpisodesDescription,
                             airsDateTemplate = strAirsDate,
                             upcomingLabel = strUpcoming,
                             context = localizedContext
@@ -123,6 +129,7 @@ internal fun buildModernHomePresentation(
             cache.upcomingTitle = strUpcomingSectionTitle
             cache.upcomingUseLandscapePosters = input.useLandscapePosters
             cache.upcomingShowImdbRatings = input.showImdbRatings
+            cache.upcomingHideUnwatchedEpisodesDescription = input.hideUnwatchedEpisodesDescription
             cache.upcomingRow = upcomingRow
             add(upcomingRow)
         } else {

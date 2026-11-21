@@ -107,6 +107,7 @@ internal fun EpisodeOptionsOverlay(
     imdbRating: Double? = null,
     isWatched: Boolean,
     blurUnwatchedEpisodes: Boolean = false,
+    hideUnwatchedEpisodesDescription: Boolean = false,
     style: EpisodeOptionsOverlayStyle = EpisodeOptionsOverlayStyle.ARTWORK,
     isPending: Boolean,
     isSeasonFullyWatched: Boolean = false,
@@ -144,7 +145,16 @@ internal fun EpisodeOptionsOverlay(
     val ratingFocusRequester = remember { FocusRequester() }
     val ratingPageVisible = showRating && ratingMedia != null && ratingState.isAvailable
     val title = episode.title.localizeEpisodeTitle(context)
-    val description = episode.overview?.trim().orEmpty()
+    val shouldHideDescription = shouldHideEpisodeDescription(
+        hideUnwatchedEpisodesDescription = hideUnwatchedEpisodesDescription,
+        isWatched = isWatched
+    )
+    val rawOverview = episode.overview?.trim().orEmpty()
+    val description = if (shouldHideDescription && rawOverview.isNotBlank()) {
+        stringResource(R.string.episode_description_hidden_spoiler)
+    } else {
+        rawOverview
+    }
     val titleStyle = episodeOverlayTitleStyle(title.length)
     val descriptionStyle = episodeOverlayDescriptionStyle(description.length)
     val isNoneStyle = !shouldShowEpisodeOverlayBackdrop(style)
@@ -656,6 +666,13 @@ internal fun shouldBlurEpisodeOverlayBackdrop(
 ): Boolean {
     return style == EpisodeOptionsOverlayStyle.BLUR ||
         (style == EpisodeOptionsOverlayStyle.ARTWORK && blurUnwatchedEpisodes && !isWatched)
+}
+
+internal fun shouldHideEpisodeDescription(
+    hideUnwatchedEpisodesDescription: Boolean,
+    isWatched: Boolean
+): Boolean {
+    return hideUnwatchedEpisodesDescription && !isWatched
 }
 
 private const val TMDB_IMAGE_SIZE_PREFIX = "/t/p/"

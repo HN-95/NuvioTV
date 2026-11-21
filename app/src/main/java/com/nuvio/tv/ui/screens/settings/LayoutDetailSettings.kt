@@ -50,6 +50,14 @@ internal fun LayoutDetailPageSection(
         checked = uiState.blurUnwatchedEpisodes,
         onToggle = { onEvent(LayoutSettingsEvent.SetBlurUnwatchedEpisodes(!uiState.blurUnwatchedEpisodes)) }
     )
+    SettingsToggleRow(
+        title = stringResource(R.string.layout_hide_unwatched_description),
+        subtitle = stringResource(R.string.layout_hide_unwatched_description_sub),
+        checked = uiState.hideUnwatchedEpisodesDescription,
+        onToggle = {
+            onEvent(LayoutSettingsEvent.SetHideUnwatchedEpisodesDescription(!uiState.hideUnwatchedEpisodesDescription))
+        }
+    )
     SettingsActionRow(
         title = stringResource(R.string.layout_episode_ratings),
         subtitle = stringResource(R.string.layout_episode_ratings_sub),

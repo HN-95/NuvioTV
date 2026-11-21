@@ -195,6 +195,7 @@ class MetaDetailsViewModel @Inject constructor(
         observeRelatedWatchedStatus()
         observeBlurUnwatchedEpisodes()
         observeSeasonPostersEnabled()
+        observeHideUnwatchedEpisodesDescription()
         observeEpisodeOptionsOverlayStyle()
         observeOverallRatingsVisibility()
         observeDetailImdbRatingsVisibility()
@@ -666,6 +667,22 @@ class MetaDetailsViewModel @Inject constructor(
                 .collectLatest { enabled ->
                     _uiState.update { state ->
                         if (state.seasonPostersEnabled == enabled) state else state.copy(seasonPostersEnabled = enabled)
+                    }
+                }
+        }
+    }
+
+    private fun observeHideUnwatchedEpisodesDescription() {
+        viewModelScope.launch {
+            layoutPreferenceDataStore.hideUnwatchedEpisodesDescription
+                .distinctUntilChanged()
+                .collectLatest { enabled ->
+                    _uiState.update { state ->
+                        if (state.hideUnwatchedEpisodesDescription == enabled) {
+                            state
+                        } else {
+                            state.copy(hideUnwatchedEpisodesDescription = enabled)
+                        }
                     }
                 }
         }

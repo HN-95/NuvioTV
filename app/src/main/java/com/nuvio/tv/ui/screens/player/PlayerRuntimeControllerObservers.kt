@@ -287,6 +287,14 @@ internal fun PlayerRuntimeController.observeBlurUnwatchedEpisodes() {
     }
 }
 
+internal fun PlayerRuntimeController.observeHideUnwatchedEpisodesDescription() {
+    scope.launch {
+        layoutPreferenceDataStore.hideUnwatchedEpisodesDescription.collectLatest { enabled ->
+            _uiState.update { it.copy(hideUnwatchedEpisodesDescription = enabled) }
+        }
+    }
+}
+
 internal fun PlayerRuntimeController.observeEpisodeOptionsOverlayStyle() {
     scope.launch {
         layoutPreferenceDataStore.episodeOptionsOverlayStyle.collectLatest { style ->

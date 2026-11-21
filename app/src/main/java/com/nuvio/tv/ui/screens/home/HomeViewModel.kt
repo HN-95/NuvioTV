@@ -536,6 +536,13 @@ class HomeViewModel @Inject constructor(
                 }
         }
         viewModelScope.launch {
+            layoutPreferenceDataStore.hideUnwatchedEpisodesDescription
+                .distinctUntilChanged()
+                .collect { enabled ->
+                    _uiState.update { it.copy(hideUnwatchedEpisodesDescription = enabled) }
+                }
+        }
+        viewModelScope.launch {
             layoutPreferenceDataStore.useEpisodeThumbnailsInCw
                 .distinctUntilChanged()
                 .collect { enabled ->
