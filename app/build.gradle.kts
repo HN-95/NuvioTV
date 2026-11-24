@@ -216,26 +216,18 @@ android {
         }
     }
 
-    val releaseStoreFile = releaseStoreFilePath?.let(::file)
-        ?: file("../nuviotv.jks").takeIf { it.exists() }
-        ?: file("nuviotv.jks")
-
     signingConfigs {
         create("release") {
             keyAlias = releaseKeyAliasValue
             keyPassword = releaseKeyPasswordValue
-            storeFile = releaseStoreFile
+            storeFile = releaseStoreFilePath?.let(::file) ?: file("../nuviotv.jks")
             storePassword = releaseStorePasswordValue
         }
     }
 
     buildTypes {
         debug {
-            signingConfig = if (releaseStoreFile.exists()) {
-                signingConfigs.getByName("release")
-            } else {
-                signingConfigs.getByName("debug")
-            }
+            signingConfig = signingConfigs.getByName("release")
             isDebuggable = parseBooleanProperty(providers.gradleProperty("debuggable").orNull)
             isMinifyEnabled = false
 
@@ -268,7 +260,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            signingConfig = if (useDebugReleaseSigning || !releaseStoreFile.exists()) {
+            signingConfig = if (useDebugReleaseSigning) {
                 signingConfigs.getByName("debug")
             } else {
                 signingConfigs.getByName("release")
