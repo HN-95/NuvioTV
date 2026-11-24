@@ -24,7 +24,7 @@ jobs:
     name: Sync Upstream & Build Release APKs
     runs-on: ubuntu-latest
     env:
-      GH_TOKEN: ${{ github.token }}
+      GH_TOKEN: ${{ secrets.GH_PAT || github.token }}
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
       LOCAL_PROPERTIES_BASE64: ${{ secrets.LOCAL_PROPERTIES_BASE64 }}
       LOCAL_DEV_PROPERTIES_BASE64: ${{ secrets.LOCAL_DEV_PROPERTIES_BASE64 }}
@@ -38,6 +38,7 @@ jobs:
         uses: actions/checkout@v5
         with:
           ref: dev
+          token: ${{ secrets.GH_PAT || github.token }}
           fetch-depth: 0
           submodules: false
 
@@ -52,18 +53,33 @@ jobs:
           fi
           git fetch --no-tags upstream dev
 
+          BEFORE_SHA="$(git rev-parse HEAD)"
           if ! git merge-base --is-ancestor upstream/dev HEAD; then
             echo "Merging new commits from upstream/dev..."
-            git merge upstream/dev --no-edit
-            # Ensure GITHUB_OWNER stays pointed to HN-95 and ABI splits stay limited to armeabi-v7a & arm64-v8a
+            git merge -X ours upstream/dev --no-edit
+
+            # Take upstream's latest app/build.gradle.kts so new dependencies, tasks, and version bumps are always included,
+            # then re-apply our fork's GITHUB_OWNER and v7a/v8a ABI split settings:
+            git checkout upstream/dev -- app/build.gradle.kts
             sed -i 's/buildConfigField("String", "GITHUB_OWNER", "\\"NuvioMedia\\"")/buildConfigField("String", "GITHUB_OWNER", "\\"HN-95\\"")/g' app/build.gradle.kts
             sed -i 's/include("armeabi-v7a", "arm64-v8a", "x86", "x86_64")/include("armeabi-v7a", "arm64-v8a")/g' app/build.gradle.kts
             sed -i 's/isUniversalApk = true/isUniversalApk = false/g' app/build.gradle.kts
-            if ! git diff --quiet app/build.gradle.kts; then
-              git add app/build.gradle.kts
+
+            # Keep our sync-and-release.yml intact
+            git checkout "${BEFORE_SHA}" -- .github/workflows/sync-and-release.yml
+            git add app/build.gradle.kts .github/workflows/sync-and-release.yml
+            if ! git diff --cached --quiet; then
               git commit --amend --no-edit
             fi
-            git push origin HEAD:dev
+
+            # Push merged commits; if token lacks workflow scope and upstream modified .github/workflows, fallback to keeping our workflows
+            if ! git push origin HEAD:dev; then
+              echo "Push with upstream workflow changes failed; restoring fork .github/workflows and retrying..."
+              git checkout "${BEFORE_SHA}" -- .github/workflows
+              git add .github/workflows
+              git commit --amend --no-edit
+              git push origin HEAD:dev
+            fi
           else
             echo "Already up to date with upstream/dev."
           fi
@@ -127,6 +143,14 @@ jobs:
           set_property NUVIO_RELEASE_STORE_PASSWORD "${RELEASE_STORE_PASSWORD}"
           chmod +x gradlew
 
+      - name: Fetch Usenet Android sidecars if present
+        if: steps.sync.outputs.should_release == 'true'
+        run: |
+          if [[ -f native/usenet/scripts/fetch_prebuilts.py ]]; then
+            python3 native/usenet/scripts/fetch_prebuilts.py
+            python3 native/usenet/scripts/check_prebuilts.py
+          fi
+
       - name: Build Full Release APKs (v7a and v8a)
         if: steps.sync.outputs.should_release == 'true'
         run: ./gradlew :app:assembleFullRelease --stacktrace
@@ -171,3 +195,7 @@ jobs:
             fi
             gh release create "${release_args[@]}" "${release_apks[@]}"
           fi
+
+      - name: Clean unmapped submodule index entry before post-checkout cleanup
+        if: always()
+        run: git rm --cached -f --ignore-unmatch libmpv-android >/dev/null 2>&1 || true
