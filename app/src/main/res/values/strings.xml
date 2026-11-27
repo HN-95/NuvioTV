@@ -1127,6 +1127,7 @@
     <string name="layout_discover_location_in_sidebar_desc">Discover gets its own item in the side panel.</string>
     <string name="layout_poster_labels">Show Poster Labels</string>
     <string name="layout_poster_labels_sub">Show titles under posters in rows, grid, and see-all.</string>
+    <string name="layout_modern_poster_labels_sub">Show the title and year under posters in Home rows.</string>
     <string name="layout_addon_name">Show Addon Name</string>
     <string name="layout_addon_name_sub">Show source name under catalog titles.</string>
     <string name="layout_catalog_type">Show Catalog Type</string>
@@ -1924,6 +1925,8 @@
     <string name="settings_p2p_profile_fast_description">Uses more peer connections for difficult or high-bitrate torrents</string>
     <string name="settings_p2p_cache_size_title">Torrent cache size</string>
     <string name="settings_p2p_cache_size_description">Downloaded torrent data kept on this device for faster replays</string>
+    <string name="settings_p2p_cache_memory_only">Memory only</string>
+    <string name="settings_p2p_cache_memory_only_description">Torrent data stays in RAM and is never written to storage. Seeking back downloads it again.</string>
     <string name="settings_p2p_cache_none">No persistent cache</string>
     <string name="settings_p2p_cache_2_gb">2 GB</string>
     <string name="settings_p2p_cache_5_gb">5 GB</string>
